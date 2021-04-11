@@ -1,4 +1,5 @@
 setwd("~/Time Series/Lab_3") #set to correct dir
+
 source("ma.R")
 source("create_model_df.R")
 source("display_res.R")
