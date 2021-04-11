@@ -69,7 +69,6 @@ par(mfrow=c(1, 1))
 model_1.ts_1 <- lm(ts_1[2:length(ts_1)] ~ ts_1[1:length(ts_1)-1])
 res_1.ts_1 <- model_1.ts_1$residuals
 ma_res.ts_1 <- ma(res_1.ts_1, order = 5)
-moving_average(res_1.ts_1, N = 5)
 temp.pacf <- pacf(ma_res.ts_1, lag = 12, na.action = na.pass)
 temp.pacf
 
@@ -87,23 +86,25 @@ ma_10.ts_1 <- moving_average(ts_1, 10)
 ma_10_exp.ts_1 <- moving_average(ts_1, 10, "exp")
 
 model_1_ma_5.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_5.ts_1, 5, 1, 6))
+#7 = max(p,q)+1
 pred_1_ma_5.ts_1 <- fitted(model_1_ma_5.ts_1) + ma_5.ts_1[7:length(ma_5.ts_1)]
+#11 = max(p,q)+N
 display.res.arima(pred_1_ma_5.ts_1, ts_1[11:length(ts_1)], order = c(1, 6))
 
 model_1_ma_5_exp.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_5_exp.ts_1, 5, 1, 6))
-pred_1_ma_5_exp.ts_1 <- fitted(model_1_ma_5_exp.ts_1) + ma_5_exp.ts_1[1:(length(ma_5.ts_1) - 7)]
+pred_1_ma_5_exp.ts_1 <- fitted(model_1_ma_5_exp.ts_1) + ma_5_exp.ts_1[7:length(ma_5_exp.ts_1)]
 display.res.arima(pred_1_ma_5_exp.ts_1, 
-                  window(ts_1, start = 5,end = length(ts_1) - 1 - 6), c(1, 6))
+                  window(ts_1, start = 11,end = length(ts_1)), c(1, 6))
 
 model_1_ma_10.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_10.ts_1, 10, 1, 6))
-pred_1_ma_10.ts_1 <- fitted(model_1_ma_10.ts_1) + ma_10.ts_1[1:(length(ma_10.ts_1) - 7)]
+pred_1_ma_10.ts_1 <- fitted(model_1_ma_10.ts_1) + ma_10.ts_1[7:length(ma_10.ts_1)]
 display.res.arima(pred_1_ma_10.ts_1, 
-                  window(ts_1, start = 10, end = length(ts_1) - 1 - 6), c(1, 6))
+                  window(ts_1, start = 16, end = length(ts_1)), c(1, 6))
 
 model_1_ma_10_exp.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_10_exp.ts_1, 10, 1, 6))
-pred_1_ma_10_exp.ts_1 <- fitted(model_1_ma_10_exp.ts_1) + ma_10_exp.ts_1[1:(length(ma_10_exp.ts_1) - 7)]
+pred_1_ma_10_exp.ts_1 <- fitted(model_1_ma_10_exp.ts_1) + ma_10_exp.ts_1[7:(length(ma_10_exp.ts_1))]
 display.res.arima(pred_1_ma_10_exp.ts_1,
-                  window(ts_1, start = 10, end = length(ts_1) - 1 - 6), c(1, 6))
+                  window(ts_1, start = 16, end = length(ts_1)), c(1, 6))
 
 #1st approach, 2nd ts
 model_1.ts_2 <- lm(ts_2[2:length(ts_2)]~ ts_2[1:length(ts_2)-1])
@@ -124,24 +125,24 @@ model_1_r.ts_2 <- arima(ts_2, order = c(1, 0, 6), method = "CSS")
 display.res.arima(pred = fitted(model_1_r.ts_2), true = ts_2, order = c(1, 6))
 
 model_1_ma_5.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_5.ts_2, 5, 1, 6))
-pred_1_ma_5.ts_2 <- fitted(model_1_ma_5.ts_2) + ma_5.ts_2[1:(length(ma_5.ts_2) - 7)]
+pred_1_ma_5.ts_2 <- fitted(model_1_ma_5.ts_2) + ma_5.ts_2[7:(length(ma_5.ts_2))]
 display.res.arima(pred_1_ma_5.ts_2, 
-                  window(ts_2, start = 5, end = length(ts_2) - 1 - 6), c(1, 6))
+                  window(ts_2, start = 11, end = length(ts_2)), c(1, 6))
 
 model_1_ma_5_exp.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_5_exp.ts_2, 5, 1, 6))
-pred_1_ma_5_exp.ts_2 <- fitted(model_1_ma_5_exp.ts_2) + ma_5_exp.ts_2[1:(length(ma_5_exp.ts_2) - 7)]
+pred_1_ma_5_exp.ts_2 <- fitted(model_1_ma_5_exp.ts_2) + ma_5_exp.ts_2[7:length(ma_5_exp.ts_2)]
 display.res.arima(pred_1_ma_5_exp.ts_2, 
-                  window(ts_2, start = 5,end = length(ts_2) - 1 - 6), c(1, 6))
+                  window(ts_2, start = 11,end = length(ts_2)), c(1, 6))
 
 model_1_ma_10.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_10.ts_2, 10, 1, 6))
-pred_1_ma_10.ts_2 <- fitted(model_1_ma_10.ts_2) + ma_10.ts_2[1:(length(ma_10.ts_2) - 7)]
+pred_1_ma_10.ts_2 <- fitted(model_1_ma_10.ts_2) + ma_10.ts_2[7:(length(ma_10.ts_2))]
 display.res.arima(pred_1_ma_10.ts_2, 
-                  window(ts_2, start = 10, end = length(ts_2) - 1 - 6), c(1, 6))
+                  window(ts_2, start = 16, end = length(ts_2)), c(1, 6))
 
 model_1_ma_10_exp.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_10_exp.ts_2, 10, 1, 6))
-pred_1_ma_10_exp.ts_2 <- fitted(model_1_ma_10_exp.ts_2) + ma_10_exp.ts_2[1:(length(ma_10_exp.ts_2) - 7)]
+pred_1_ma_10_exp.ts_2 <- fitted(model_1_ma_10_exp.ts_2) + ma_10_exp.ts_2[7:(length(ma_10_exp.ts_2))]
 display.res.arima(pred_1_ma_10_exp.ts_2, 
-                  window(ts_2, start = 10, end = length(ts_2) - 1 - 6), c(1, 6))
+                  window(ts_2, start = 16, end = length(ts_2)), c(1, 6))
 
 
 #2nd approach, 1st ts
@@ -158,187 +159,111 @@ pred_2_ma_5.ts_1 <- pred_own(fitted(model_2_ma_5_own.ts_1), ma_5.ts_1, 1, 1)
 display.res.arima(pred_2_ma_5.ts_1, 
                   window(ts_1, start = 7, end = length(ts_1)), c(1, 1))
 
-
 model_2_ma_10_own.ts_1 <- lm(y_k~., data=create_model_df_own(ts_1, ma_10.ts_1, 10, 1, 1))
-
-summary(model_2_ma_10_own.ts_1)
-sum(model_2_ma_10_own.ts_1$residuals**2)
-AIC(model_2_ma_10_own.ts_1)
-durbinWatsonTest(model_2_ma_10_own.ts_1)
+pred_2_ma_10.ts_1 <- pred_own(fitted(model_2_ma_10_own.ts_1), ma_10.ts_1, 1, 1)
+display.res.arima(pred_2_ma_10.ts_1, 
+                  window(ts_1, start = 7+5, end = length(ts_1)), c(1, 1))
 
 model_2_ma_5_exp_own.ts_1 <- lm(y_k~., data=create_model_df_own(ts_1, ma_5_exp.ts_1, 5, 1, 1))
-
-summary(model_2_ma_5_exp_own.ts_1)
-sum(model_2_ma_5_exp_own.ts_1$residuals**2)
-AIC(model_2_ma_5_exp_own.ts_1)
-durbinWatsonTest(model_2_ma_5_exp_own.ts_1)
+pred_2_ma_5_exp.ts_1 <- pred_own(fitted(model_2_ma_5_exp_own.ts_1), ma_5_exp.ts_1, 1, 1)
+display.res.arima(pred_2_ma_5_exp.ts_1, 
+                  window(ts_1, start = 7, end = length(ts_1)), c(1, 1))
 
 model_2_ma_10_exp_own.ts_1 <- lm(y_k~., data=create_model_df_own(ts_1, ma_10_exp.ts_1, 10, 1, 1))
+pred_2_ma_10_exp.ts_1 <- pred_own(fitted(model_2_ma_10_exp_own.ts_1), ma_10_exp.ts_1, 1, 1)
+display.res.arima(pred_2_ma_10_exp.ts_1, 
+                  window(ts_1, start = 7+5, end = length(ts_1)), c(1, 1))
 
-summary(model_2_ma_10_exp_own.ts_1)
-sum(model_2_ma_10_exp_own.ts_1$residuals**2)
-AIC(model_2_ma_10_exp_own.ts_1)
-durbinWatsonTest(model_2_ma_10_exp_own.ts_1)
 
 
 #2.2, 1st ts
 model_2_ma_5.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_5.ts_1, 5, 1, 1))
-
-rsq(model_2_ma_5.ts_1$fitted.values+ma_5_exp.ts_1, ts_1)
-RSS(model_2_ma_5.ts_1$fitted.values+ma_5_exp.ts_1, ts_1)
-IKA(model_2_ma_5.ts_1$fitted.values+ma_5_exp.ts_1, ts_1)
-durbin_watson(model_2_ma_5.ts_1+ma_5_exp.ts_1, ts_1, )
+pred_3_ma_5.ts_1 <- fitted(model_2_ma_5.ts_1) + ma_5.ts_1[2:length(ma_5.ts_1)]
+display.res.arima(pred_3_ma_5.ts_1, ts_1[6:length(ts_1)], c(1, 1))
 
 model_2_ma_10.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_10.ts_1, 10, 1, 1))
-
-summary(model_2_ma_10.ts_1)
-sum(model_2_ma_10.ts_1$residuals**2)
-AIC(model_2_ma_10.ts_1)
-durbinWatsonTest(model_2_ma_10.ts_1)
+pred_3_ma_10.ts_1 <- fitted(model_2_ma_10.ts_1) + ma_10.ts_1[2:length(ma_10.ts_1)]
+display.res.arima(pred_3_ma_10.ts_1, ts_1[11:length(ts_1)], c(1, 1))
 
 model_2_ma_5_exp.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_5_exp.ts_1, 5, 1, 1))
-
-summary(model_2_ma_5_exp.ts_1)
-sum(model_2_ma_5_exp.ts_1$residuals**2)
-AIC(model_2_ma_5_exp.ts_1)
-durbinWatsonTest(model_2_ma_5_exp.ts_1)
+pred_3_ma_5_exp.ts_1 <- fitted(model_2_ma_5_exp.ts_1) + ma_5_exp.ts_1[2:(length(ma_5_exp.ts_1))]
+display.res.arima(pred_3_ma_5_exp.ts_1, ts_1[6:length(ts_1)], c(1, 1))
 
 model_2_ma_10_exp.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_10_exp.ts_1, 10, 1, 1))
-
-summary(model_2_ma_10_exp.ts_1)
-sum(model_2_ma_10_exp.ts_1$residuals**2)
-AIC(model_2_ma_10_exp.ts_1)
-durbinWatsonTest(model_2_ma_10_exp.ts_1)
+pred_3_ma_10_exp.ts_1 <- fitted(model_2_ma_10_exp.ts_1) + ma_10_exp.ts_1[2:(length(ma_10_exp.ts_1))]
+display.res.arima(pred_3_ma_10_exp.ts_1, ts_1[11:length(ts_1)], c(1, 1))
 
 #2nd approach, 2nd ts
-pacf(ma_5.ts_2)
-pacf(ma_5_exp.ts_2)
-pacf(ma_10.ts_2)
-pacf(ma_10_exp.ts_2)
+pacf(ma(ts_1, order = 5), lag = 12, na.action = na.pass)
 
 #Best model - ARMA(1, 1)
 model_2_r.ts_2 <- arima(ts_2, order = c(1, 0, 1), method = "CSS")
+display.res.arima(fitted(model_2_r.ts_2), ts_2, c(1, 1))
 
 #2.1, 2nd ts
 model_2_ma_5_own.ts_2 <- lm(y_k~., data=create_model_df_own(ts_2, ma_5.ts_2, 5, 1, 1))
-
-summary(model_2_ma_5_own.ts_2)
-sum(model_2_ma_5_own.ts_2$residuals**2)
-AIC(model_2_ma_5_own.ts_2)
-durbinWatsonTest(model_2_ma_5_own.ts_2)
+pred_2_ma_5.ts_2 <- pred_own(fitted(model_2_ma_5_own.ts_2), ma_5.ts_2, 1, 1)
+display.res.arima(pred_2_ma_5.ts_2, 
+                  window(ts_2, start = 7, end = length(ts_2)), c(1, 1))
 
 model_2_ma_10_own.ts_2 <- lm(y_k~., data=create_model_df_own(ts_2, ma_10.ts_2, 10, 1, 1))
-
-summary(model_2_ma_10_own.ts_2)
-sum(model_2_ma_10_own.ts_2$residuals**2)
-AIC(model_2_ma_10_own.ts_2)
-durbinWatsonTest(model_2_ma_10_own.ts_2)
+pred_2_ma_10.ts_2 <- pred_own(fitted(model_2_ma_10_own.ts_2), ma_10.ts_2, 1, 1)
+display.res.arima(pred_2_ma_10.ts_2, 
+                  window(ts_2, start = 7+5, end = length(ts_2)), c(1, 1))
 
 model_2_ma_5_exp_own.ts_2 <- lm(y_k~., data=create_model_df_own(ts_2, ma_5_exp.ts_2, 5, 1, 1))
-
-summary(model_2_ma_5_exp_own.ts_2)
-sum(model_2_ma_5_exp_own.ts_2$residuals**2)
-AIC(model_2_ma_5_exp_own.ts_2)
-durbinWatsonTest(model_2_ma_5_exp_own.ts_2)
+pred_2_ma_5_exp.ts_2 <- pred_own(fitted(model_2_ma_5_exp_own.ts_2), ma_5_exp.ts_2, 1, 1)
+display.res.arima(pred_2_ma_5_exp.ts_2, 
+                  window(ts_2, start = 7, end = length(ts_2)), c(1, 1))
 
 model_2_ma_10_exp_own.ts_2 <- lm(y_k~., data=create_model_df_own(ts_2, ma_10_exp.ts_2, 10, 1, 1))
+pred_2_ma_10_exp.ts_2 <- pred_own(fitted(model_2_ma_10_exp_own.ts_2), ma_10_exp.ts_2, 1, 1)
+display.res.arima(pred_2_ma_10_exp.ts_2, 
+                  window(ts_2, start = 7+5, end = length(ts_2)), c(1, 1))
 
-summary(model_2_ma_10_exp_own.ts_2)
-sum(model_2_ma_10_exp_own.ts_2$residuals**2)
-AIC(model_2_ma_10_exp_own.ts_2)
-durbinWatsonTest(model_2_ma_10_exp_own.ts_2)
 
 
 #2.2, 2nd ts
 model_2_ma_5.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_5.ts_2, 5, 1, 1))
-
-summary(model_2_ma_5.ts_2)
-sum(model_2_ma_5.ts_2$residuals**2)
-AIC(model_2_ma_5.ts_2)
-durbinWatsonTest(model_2_ma_5.ts_2)
+pred_3_ma_5.ts_2 <- fitted(model_2_ma_5.ts_2) + ma_5.ts_2[2:(length(ma_5.ts_2))]
+display.res.arima(pred_3_ma_5.ts_2, ts_2[6:length(ts_2)], c(1, 1))
 
 model_2_ma_10.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_10.ts_2, 10, 1, 1))
-
-summary(model_2_ma_10.ts_2)
-sum(model_2_ma_10.ts_2$residuals**2)
-AIC(model_2_ma_10.ts_2)
-durbinWatsonTest(model_2_ma_10.ts_2)
+pred_3_ma_10.ts_2 <- fitted(model_2_ma_10.ts_2) + ma_10.ts_2[2:(length(ma_10.ts_2))]
+display.res.arima(pred_3_ma_10.ts_2, ts_2[11:length(ts_2)], c(1, 1))
 
 model_2_ma_5_exp.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_5_exp.ts_2, 5, 1, 1))
-
-summary(model_2_ma_5_exp.ts_2)
-sum(model_2_ma_5_exp.ts_2$residuals**2)
-AIC(model_2_ma_5_exp.ts_2)
-durbinWatsonTest(model_2_ma_5_exp.ts_2)
+pred_3_ma_5_exp.ts_2 <- fitted(model_2_ma_5_exp.ts_2) + ma_5_exp.ts_2[2:(length(ma_5_exp.ts_2))]
+display.res.arima(pred_3_ma_5_exp.ts_2, ts_2[6:length(ts_2)], c(1, 1))
 
 model_2_ma_10_exp.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_10_exp.ts_2, 10, 1, 1))
+pred_3_ma_10_exp.ts_2 <- fitted(model_2_ma_10_exp.ts_2) + ma_10_exp.ts_2[2:(length(ma_10_exp.ts_2))]
+display.res.arima(pred_3_ma_10_exp.ts_2, ts_2[11:length(ts_2)], c(1, 1))
 
-summary(model_2_ma_10_exp.ts_2)
-sum(model_2_ma_10_exp.ts_2$residuals**2)
-AIC(model_2_ma_10_exp.ts_2)
-durbinWatsonTest(model_2_ma_10_exp.ts_2)
+#Best models plot
+ts.plot(pred_1_ma_5.ts_1[1:length(pred_1_ma_5.ts_1)], 
+        window(ts_1, start = 11,end = length(ts_1)), 
+        gpars = list(col = c("red", "black")))
 
-coef_gen <- "$y(k)="
-coefs <- model_2_ma_10_exp.ts_1$coefficients
-for (i in 1:length(coefs)){
-  if (i == 1) {
-    coef_gen <- paste(coef_gen, as.character(round(coefs[i], 2)), ifelse(coefs[i]>0, "+", ""))}
-  else if (i==2) {
-    coef_gen <- paste(coef_gen, as.character(round(coefs[i], 2)), "y(k-", as.character(i-1),
-                      ")")}
-  else {
-    if(i%%3 == 0){
-      if(i == 3)
-        coef_gen <- paste(coef_gen,"+ma(k)", ifelse(coefs[i]>0, "+", ""), as.character(round(coefs[i], 2)),
-                          "ma(k-", as.character(i-2),
-                          ")$\n$")
-      else coef_gen <- paste(coef_gen,ifelse(coefs[i]>0, "+", ""), as.character(round(coefs[i], 2)),
-                             "ma(k-", as.character(i-2),
-                             ")$\n$")
-    }
-    
-  else coef_gen <- paste(coef_gen,ifelse(coefs[i]>0, "+", ""), as.character(round(coefs[i], 2)),
-                         "ma(k-", as.character(i-2),
-                         ")")}
-  }
-coef_gen <- paste(coef_gen, "$")
-cat(coef_gen)
+ts.plot(pred_1_ma_5.ts_2, 
+        window(ts_2, start = 11,end = length(ts_2)), 
+        gpars = list(col = c("red", "black")))
 
+#Multiple regression
+rts1 <- read.csv("Data/rts1.txt", sep = " ", header = F)
+RTScr <- read.csv("Data/RTScr.txt", sep = " ", header = F)
+RTSeu <- read.csv("Data/RTSeu.txt", sep = " ", header = F)
+RTSfn <- read.csv("Data/RTSfn.txt", sep = " ", header = F)
+RTSin <- read.csv("Data/RTSin.txt", sep = " ", header = F)
+RTSmm <- read.csv("Data/RTSmm.txt", sep = " ", header = F)
+RTSog <- read.csv("Data/RTSog.txt", sep = " ", header = F)
+RTStl <- read.csv("Data/RTStl.txt", sep = " ", header = F)
 
-coef_gen <- "$y(k)="
-coefs <- model_2_ma_10_exp.ts_2$coef
-coef_gen <- paste(coef_gen, as.character(round(coefs[length(coefs)], 2)), ifelse(coefs[1]>0, "+", ""))
+rts_df <- cbind(rts1, RTScr, RTSeu, RTSfn, RTSin, RTSmm, RTSog, RTStl)
+colnames(rts_df) <- c("rts1", "RTScr", "RTSeu", "RTSfn", 
+                      "RTSin", "RTSmm", "RTSog", "RTStl")
+cor(rts_df)
 
-for (i in 1:(length(coefs)-1)){
-  if (i==1) {
-    coef_gen <- paste(coef_gen, as.character(round(coefs[i], 2)), "y(k-", as.character(i),
-                      ")")}
-  else {
-    if(i%%3 == 2){
-      if(i == 2)
-        coef_gen <- paste(coef_gen,"+ma(k)", ifelse(coefs[i]>0, "+", ""), as.character(round(coefs[i], 2)),
-                          "ma(k-", as.character(i-1),
-                          ")$\n$")
-      else coef_gen <- paste(coef_gen,ifelse(coefs[i]>0, "+", ""), as.character(round(coefs[i], 2)),
-                             "ma(k-", as.character(i-1),
-                             ")$\n$")
-    }
-    
-    else coef_gen <- paste(coef_gen,ifelse(coefs[i]>0, "+", ""), as.character(round(coefs[i], 2)),
-                           "ma(k-", as.character(i-1),
-                           ")")}
-}
-coef_gen <- paste(coef_gen, "$")
-cat(coef_gen)
-
-coef_gen <- "$y(k)="
-coefs <- model_2_ma_10_exp_own.ts_2$coefficients
-for (i in 1:length(coefs)){
-  if (i == 1) {
-    coef_gen <- paste(coef_gen, as.character(round(coefs[i], 2)), ifelse(coefs[i]>0, "+", ""))}
-  else if (i==2) {
-    coef_gen <- paste(coef_gen, as.character(round(coefs[i], 2)), "y(k-", as.character(i-1),
-                      ")")}
-}
-coef_gen <- paste(coef_gen, "+ma(k)+ma(k-1)$")
-cat(coef_gen)
+model_rts <- lm(rts1 ~., data = rts_df)
+model_rts$coefficients
+summary(model_rts)
