@@ -1,5 +1,5 @@
 RSS <- function(pred, true){
-  return (sum(pred-true)**2)
+  return (sum((pred-true)**2))
 }
 
 rsq <- function (pred, true){

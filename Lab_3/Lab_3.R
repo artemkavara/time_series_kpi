@@ -1,8 +1,10 @@
 setwd("~/Time Series/Lab_3") #set to correct dir
 source("ma.R")
+source("create_model_df.R")
+source("display_res.R")
 
-ts_1 <- read.csv("2001rts1.txt", header = F)
-ts_2 <- read.csv("RTSin.txt", header = F)
+ts_1 <- read.csv("Data/2001rts1.txt", header = F)
+ts_2 <- read.csv("Data/RTSin.txt", header = F)
 
 #transform data
 library(zoo)
@@ -62,98 +64,100 @@ pacf.ts_2
 plot(pacf.ts_1)
 plot(pacf.ts_2)
 
+par(mfrow=c(1, 1))
 #1st approach, 1st ts
-model_1.ts_1 <- lm(ts_1[2:length(ts_1)]~ ts_1[1:length(ts_1)-1])
+model_1.ts_1 <- lm(ts_1[2:length(ts_1)] ~ ts_1[1:length(ts_1)-1])
 res_1.ts_1 <- model_1.ts_1$residuals
-pacf(res_1.ts_1, lag = 12)
+ma_res.ts_1 <- ma(res_1.ts_1, order = 5)
+moving_average(res_1.ts_1, N = 5)
+temp.pacf <- pacf(ma_res.ts_1, lag = 12, na.action = na.pass)
+temp.pacf
 
-summary(model_1.ts_1)
-sum(model_1.ts_1$residuals**2)
-AIC(model_1.ts_1)
-durbinWatsonTest(model_1.ts_1)
-#Best model - ARMA(1, 0)
-model_1_r.ts_1 <- arima(ts_1, order = c(1, 0, 0))
+
+display.res.arima(fitted(model_1.ts_1), ts_1[2:length(ts_1)], c(1, 6))
+#display.res(model_1.ts_1)
+
+#Best model - ARMA(1, 6)
+model_1_r.ts_1 <- arima(ts_1, order = c(1, 0, 6))
+display.res.arima(fitted(model_1_r.ts_1), ts_1, c(1, 6))
 
 ma_5.ts_1 <- moving_average(ts_1, 5)
 ma_5_exp.ts_1 <- moving_average(ts_1, 5, "exp")
 ma_10.ts_1 <- moving_average(ts_1, 10)
 ma_10_exp.ts_1 <- moving_average(ts_1, 10, "exp")
 
+model_1_ma_5.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_5.ts_1, 5, 1, 6))
+pred_1_ma_5.ts_1 <- fitted(model_1_ma_5.ts_1) + ma_5.ts_1[7:length(ma_5.ts_1)]
+display.res.arima(pred_1_ma_5.ts_1, ts_1[11:length(ts_1)], order = c(1, 6))
+
+model_1_ma_5_exp.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_5_exp.ts_1, 5, 1, 6))
+pred_1_ma_5_exp.ts_1 <- fitted(model_1_ma_5_exp.ts_1) + ma_5_exp.ts_1[1:(length(ma_5.ts_1) - 7)]
+display.res.arima(pred_1_ma_5_exp.ts_1, 
+                  window(ts_1, start = 5,end = length(ts_1) - 1 - 6), c(1, 6))
+
+model_1_ma_10.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_10.ts_1, 10, 1, 6))
+pred_1_ma_10.ts_1 <- fitted(model_1_ma_10.ts_1) + ma_10.ts_1[1:(length(ma_10.ts_1) - 7)]
+display.res.arima(pred_1_ma_10.ts_1, 
+                  window(ts_1, start = 10, end = length(ts_1) - 1 - 6), c(1, 6))
+
+model_1_ma_10_exp.ts_1 <- lm(y_k~., data=create_model_df(ts_1, ma_10_exp.ts_1, 10, 1, 6))
+pred_1_ma_10_exp.ts_1 <- fitted(model_1_ma_10_exp.ts_1) + ma_10_exp.ts_1[1:(length(ma_10_exp.ts_1) - 7)]
+display.res.arima(pred_1_ma_10_exp.ts_1,
+                  window(ts_1, start = 10, end = length(ts_1) - 1 - 6), c(1, 6))
+
 #1st approach, 2nd ts
 model_1.ts_2 <- lm(ts_2[2:length(ts_2)]~ ts_2[1:length(ts_2)-1])
 res_1.ts_2 <- model_1.ts_2$residuals
-pacf(res_1.ts_2, lag = 12)
+temp.pacf <- pacf(ma(res_1.ts_2, 5), lag = 12, na.action = na.pass)
+temp.pacf
 
-summary(model_1.ts_2)
-sum(model_1.ts_2$residuals**2)
-AIC(model_1.ts_2)
-durbinWatsonTest(model_1.ts_2)
+display.res.arima(fitted(model_1.ts_2), ts_2[2:length(ts_2)], c(1, 0))
 
-#Best model - ARMA(1, 11)
+#Best model - ARMA(1, 6)
 ma_5.ts_2 <- moving_average(ts_2, 5)
 ma_5_exp.ts_2 <- moving_average(ts_2, 5, "exp")
 ma_10.ts_2 <- moving_average(ts_2, 10)
 ma_10_exp.ts_2 <- moving_average(ts_2, 10, "exp")
 
 
-model_1_r.ts_2 <- arima(ts_2, order = c(1, 0, 11), method = "CSS")
+model_1_r.ts_2 <- arima(ts_2, order = c(1, 0, 6), method = "CSS")
+display.res.arima(pred = fitted(model_1_r.ts_2), true = ts_2, order = c(1, 6))
 
-rsq(predict(model_1_r.ts_2, n.ahead = length(ts_2))$pred, ts_2)
-sum(model_1_r.ts_2$residuals**2)
-length(ts_2)*log(sum(model_1_r.ts_2$residuals**2))+2*(1+11+1)
-durbinWatsonTest(as.vector(model_1_r.ts_2$residuals))
+model_1_ma_5.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_5.ts_2, 5, 1, 6))
+pred_1_ma_5.ts_2 <- fitted(model_1_ma_5.ts_2) + ma_5.ts_2[1:(length(ma_5.ts_2) - 7)]
+display.res.arima(pred_1_ma_5.ts_2, 
+                  window(ts_2, start = 5, end = length(ts_2) - 1 - 6), c(1, 6))
 
+model_1_ma_5_exp.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_5_exp.ts_2, 5, 1, 6))
+pred_1_ma_5_exp.ts_2 <- fitted(model_1_ma_5_exp.ts_2) + ma_5_exp.ts_2[1:(length(ma_5_exp.ts_2) - 7)]
+display.res.arima(pred_1_ma_5_exp.ts_2, 
+                  window(ts_2, start = 5,end = length(ts_2) - 1 - 6), c(1, 6))
 
-model_1_ma_5.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_5.ts_2, 5, 1, 11))
+model_1_ma_10.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_10.ts_2, 10, 1, 6))
+pred_1_ma_10.ts_2 <- fitted(model_1_ma_10.ts_2) + ma_10.ts_2[1:(length(ma_10.ts_2) - 7)]
+display.res.arima(pred_1_ma_10.ts_2, 
+                  window(ts_2, start = 10, end = length(ts_2) - 1 - 6), c(1, 6))
 
-summary(model_1_ma_5.ts_2)
-sum(model_1_ma_5.ts_2$residuals**2)
-AIC(model_1_ma_5.ts_2)
-durbinWatsonTest(model_1_ma_5.ts_2)
+model_1_ma_10_exp.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_10_exp.ts_2, 10, 1, 6))
+pred_1_ma_10_exp.ts_2 <- fitted(model_1_ma_10_exp.ts_2) + ma_10_exp.ts_2[1:(length(ma_10_exp.ts_2) - 7)]
+display.res.arima(pred_1_ma_10_exp.ts_2, 
+                  window(ts_2, start = 10, end = length(ts_2) - 1 - 6), c(1, 6))
 
-
-model_1_ma_10.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_10.ts_2, 10, 1, 11))
-
-summary(model_1_ma_10.ts_2)
-sum(model_1_ma_10.ts_2$residuals**2)
-AIC(model_1_ma_10.ts_2)
-durbinWatsonTest(model_1_ma_10.ts_2)
-
-
-model_1_ma_5_exp.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_5_exp.ts_2, 5, 1, 11))
-
-summary(model_1_ma_5_exp.ts_2)
-sum(model_1_ma_5_exp.ts_2$residuals**2)
-AIC(model_1_ma_5_exp.ts_2)
-durbinWatsonTest(model_1_ma_5_exp.ts_2)
-
-
-model_1_ma_10_exp.ts_2 <- lm(y_k~., data=create_model_df(ts_2, ma_10_exp.ts_2, 10, 1, 11))
-
-summary(model_1_ma_10_exp.ts_2)
-sum(model_1_ma_10_exp.ts_2$residuals**2)
-AIC(model_1_ma_10_exp.ts_2)
-durbinWatsonTest(model_1_ma_10_exp.ts_2)
 
 #2nd approach, 1st ts
 
-pacf(ma_5.ts_1)
-pacf(ma_5_exp.ts_1)
-pacf(ma_10.ts_1)
-pacf(ma_10_exp.ts_1)
-
-
+pacf(ma(ts_1, order = 5), lag = 12, na.action = na.pass)
 
 #Best model - ARMA(1, 1)
-model_2_r.ts_1 <- arima(ts_1, order = c(1, 0, 1), method = "CSS")
+model_2_r.ts_1 <- arima(ts_1, order = c(1, 0, 1))
+display.res.arima(fitted(model_2_r.ts_1), ts_1, c(1, 1))
 
 #2.1, 1st ts
 model_2_ma_5_own.ts_1 <- lm(y_k~., data=create_model_df_own(ts_1, ma_5.ts_1, 5, 1, 1))
+pred_2_ma_5.ts_1 <- pred_own(fitted(model_2_ma_5_own.ts_1), ma_5.ts_1, 1, 1)
+display.res.arima(pred_2_ma_5.ts_1, 
+                  window(ts_1, start = 7, end = length(ts_1)), c(1, 1))
 
-summary(model_2_ma_5_own.ts_1)
-sum(model_2_ma_5_own.ts_1$residuals**2)
-AIC(model_2_ma_5_own.ts_1)
-durbinWatsonTest(model_2_ma_5_own.ts_1)
 
 model_2_ma_10_own.ts_1 <- lm(y_k~., data=create_model_df_own(ts_1, ma_10.ts_1, 10, 1, 1))
 
