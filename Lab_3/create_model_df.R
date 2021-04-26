@@ -1,11 +1,10 @@
 create_model_df_own <- function(time_s, ma, N, p, q){
   
   temp_ts <- time_s[N:length(time_s)]
-  temp_ts <- temp_ts - ma
   
   k <- length(temp_ts)
   s <- max(p, q)
-  temp_ts <- temp_ts[(s+1):k]
+  temp_ts <- temp_ts[(s+1):k]- ma[(s+1):k]
   sum_a <- ifelse(q == 1, 1, sum(sapply(2:(q+1), function(k) (1 - 2/(q+1))**(k-1))))
 
 
@@ -29,12 +28,10 @@ create_model_df_own <- function(time_s, ma, N, p, q){
 create_model_df <- function(time_s, ma, N, p, q){
   
   temp_ts <- time_s[N:length(time_s)]
-  temp_ts <- temp_ts - ma
-  
   k <- length(temp_ts)
   s <- max(p, q)
 
-  model_df <- data.frame(temp_ts[(s+1):k])
+  model_df <- data.frame(temp_ts[(s+1):k] - ma[(s+1):k])
   colnames(model_df)[1] <- "y_k"
   if (p) {
   for (i in 1:p){

@@ -263,8 +263,23 @@ RTStl <- read.csv("Data/RTStl.txt", sep = " ", header = F)
 rts_df <- cbind(rts1, RTScr, RTSeu, RTSfn, RTSin, RTSmm, RTSog, RTStl)
 colnames(rts_df) <- c("rts1", "RTScr", "RTSeu", "RTSfn", 
                       "RTSin", "RTSmm", "RTSog", "RTStl")
+
 cor(rts_df)
+cor(rts_df)<0.5
 
 model_rts <- lm(rts1 ~., data = rts_df)
 model_rts$coefficients
 summary(model_rts)
+display.res(model_rts)
+
+ts.plot(as.ts(model_rts$fitted.values), 
+        as.ts(rts1), 
+        gpars = list(col = c("red", "black")))
+
+model_1 <- arima(ts_1, c(1, 0, 6))
+summary(model_1)
+
+model_2 <- lm(ts_1[2:(length(ts_1))]~ts_1[1:(length(ts_1)-1)])
+summary(model_2)$r.sq
+qpcR::RSS(model_2)
+durbinWatsonTest(as.vector(model_2))
