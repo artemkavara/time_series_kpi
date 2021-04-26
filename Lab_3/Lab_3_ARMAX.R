@@ -20,7 +20,6 @@ for(col in colnames(pacf_rts)){
 #RTSog: lag 0-1
 #RTStl: lag 0-1
 
-library(forecast)
 par(mfrow = c(1, 1))
 pacf(rts1, 12)$acf
 
