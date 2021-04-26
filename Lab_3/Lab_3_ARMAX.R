@@ -1,3 +1,8 @@
+#rts1 ts
+t(describe(rts1))
+ts.plot(rts1)
+
+
 #Define describing features
 pacf_rts <- sapply(tail(colnames(rts_df), -1),
                    function(col) part_cor_fun(rts_df[,"rts1"], rts_df[,col], 12))
@@ -35,6 +40,12 @@ pacf(ma_res.rts1, 12, na.action = na.pass)$acf
 
 #q = 1, 4, 6, 11
 
+#model ARMA(2, 11)
+model_arma_rts1 <- arima(as.ts(rts1), c(2, 0, 11))
+library(forecast)
+display.res.arima(fitted(model_arma_rts1), rts1, c(2, 11))
+
+#model ARMAX
 rt1_armax <- df_armax(time_ser = as.ts(rts1), p = c(1, 2), q = c(1, 4, 6, 11), 
                          regr = rts_df[, -1], d = list(1, 1, 1, c(1,2, 10, 11),  c(1,2), 1, 1))
 df_rt1_armax <- rt1_armax[[1]]

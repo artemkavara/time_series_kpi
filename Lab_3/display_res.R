@@ -19,10 +19,14 @@ display.res.arima <- function(pred, true, order){
   
   r.sq <- rsq(pred, true)
   RSS <- RSS(pred, true)
+  MSE <- MSE(pred, true)
+  RMSE <- RMSE(pred, true)
   AIC <- IKA(pred, true, ar = order[1], ma = order[2])
   DW <- durbin_watson(true-pred)
   lst <- list("R_Squared" = r.sq,
               "RSS" = RSS,
+              "MSE" = MSE,
+              "RMSE" = RMSE,
               "AIC" = AIC,
               "Durbin_Watson" = DW)
   return(lst)
